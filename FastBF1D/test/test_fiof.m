@@ -14,10 +14,11 @@ if(~exist(log_path, 'dir'))
 end
 
 
-for i=8:2:14
+for i=8:2:10
 %% Set up parameters
 N = 2^i; %powers of 2 from 64 to 65536;
-NG = 4;  % number of Chebyshev pts
+tol = 1e-3;
+NG = 6;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1];
 k = -N/2:N/2-1;
@@ -55,7 +56,7 @@ if(0)
 end
 
 tic;
-Factor = fastBF(fun,xx,xbox,kk,kbox,NG);
+Factor = fastBF(fun,xx,xbox,kk,kbox,NG,tol);
 FactorT = toc;
 
 tic;
@@ -72,6 +73,7 @@ Td = Td*N/NC;
 disp(['------------------------------------------']);
 disp(['N                 : ' num2str(N)]);
 disp(['Chebyshev pts     : ' num2str(NG)]);
+disp(['Tolerance         : ' num2str(tol)]);
 disp(['Relative Error_2  : ' num2str(relerr)]);
 disp(['Direct Time       : ' num2str(Td) ' s']);
 disp(['Running Time      : ' num2str(RunT/60) ' mins']);

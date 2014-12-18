@@ -1,4 +1,4 @@
-function Factor = fastBF(fun,xx,xbox,kk,kbox,NG)
+function Factor = fastBF(fun,xx,xbox,kk,kbox,NG,tol)
 
 grid = fbf_grid(NG);
 
@@ -15,6 +15,8 @@ Factor = struct('U',[],'GTol',[],'M',[],'HTol',[],'V',[]);
 %   Middle level construction
 
 Mcell = cell(npx,npk);
+LRU = cell(npx,npk);
+LRV = cell(npx,npk);
 
 for x = 1:npx
     for k = 1:npk
@@ -24,14 +26,17 @@ for x = 1:npx
         ks = kbox(1)+(k-1)*klen;
         xgrid = grid*xlen+xs;
         kgrid = grid*klen+ks;
-        Mcell{x,k} = fun(xgrid,kgrid);
+        [Utmp,Stmp,Vtmp] = svdtrunc(fun(xgrid,kgrid),tol);
+        Mcell{x,k} = size(Stmp,1);
+        LRU{x,k} = Utmp*sqrt(Stmp);
+        LRV{k,x} = sqrt(Stmp)*Vtmp';
     end
 end
 
 totalH = zeros(npx,1);
 for x=1:npx
     for k=1:npk
-        totalH(x) = totalH(x) + size(Mcell{x,k},1);
+        totalH(x) = totalH(x) + Mcell{x,k};
     end
 end
 currentH = zeros(npx,1);
@@ -44,7 +49,7 @@ end
 totalW = zeros(npk,1);
 for k=1:npk
     for x=1:npx
-        totalW(k) = totalW(k) + size(Mcell{x,k},2);
+        totalW(k) = totalW(k) + Mcell{x,k};
     end
 end
 currentW = zeros(npk,1);
@@ -68,19 +73,18 @@ ST = zeros(totalel,1);
 for x=1:npx
     localH = currentH(x);
     for k=1:npk
-        [MH,MW] = size(Mcell{x,k});
-        [X,Y] = meshgrid(localH+(1:MH),currentW(k)+(1:MW));
-        X = X';
-        Y = Y';
-        idx = offset+(1:MH*MW);
+        Mlen = Mcell{x,k};
+        X = localH+(1:Mlen);
+        Y = currentW(k)+(1:Mlen);
+        idx = offset+(1:Mlen);
         XT(idx) = X(:);
         YT(idx) = Y(:);
-        ST(idx) = Mcell{x,k};
+        ST(idx) = ones(Mlen,1);
         if(~isempty(idx))
             offset = idx(end);
         end
-        localH = localH + MH;
-        currentW(k) = currentW(k) + MW;
+        localH = localH + Mlen;
+        currentW(k) = currentW(k) + Mlen;
     end
 end
 MSpr = sparse(XT,YT,ST);
@@ -101,6 +105,7 @@ for ell = 1:levels
     npxx = npxx*2;
     npkk = npkk/2;
     Gcur = cell(npxx,npkk);
+    LRUcur = cell(npxx,npkk);
     
     for x = 1:npxx
         
@@ -114,15 +119,23 @@ for ell = 1:levels
         LagrangeMat = fbf_Lagrange(xpargrid,xgrid).';
         
         for k = 1:npkk
+            kchild1 = 2*k-1;
             kcen1 = kbox(1)+(2*k-3/2)*(kbox(2)-kbox(1))/npkk/2;
             GcurL = repmat(fun(xgrid,kcen1),[1 NG]).*LagrangeMat.*repmat((1./fun(xpargrid,kcen1)).',[NG 1]);
+            GcurL = GcurL*LRU{xpar,kchild1};
             
+            kchild2 = 2*k;
             kcen2 = kbox(1)+(2*k-1/2)*(kbox(2)-kbox(1))/npkk/2;
             GcurR = repmat(fun(xgrid,kcen2),[1 NG]).*LagrangeMat.*repmat((1./fun(xpargrid,kcen2)).',[NG 1]);
+            GcurR = GcurR*LRU{xpar,kchild2};
             
-            Gcur{x,k} = [GcurL GcurR];
+            [Utmp,Stmp,Vtmp] = svdtrunc([GcurL GcurR],tol);
+            Gcur{x,k} = Vtmp';
+            LRUcur{x,k} = Utmp*Stmp;
         end
     end
+    
+    LRU = LRUcur;
     
     totalel = 0;
     for x = 1:npxx
@@ -177,7 +190,7 @@ for ell = 1:levels
 end
 
 Factor.GTol = GTol;
-clear GTol;
+clear GTol LRUcur Gcur;
 
 %           U
 
@@ -195,6 +208,7 @@ for x = 1:npxx
     for k = 1:npkk
         kcen = kbox(1)+(k-1/2)*(kbox(2)-kbox(1))/npkk;
         Ucell{x,k} = repmat(fun(xxsub,kcen),[1 NG]).*LagrangeMat.*repmat((1./fun(xgrid,kcen)).',[size(xxsub,1) 1]);
+        Ucell{x,k} = Ucell{x,k}*LRU{x,k};
     end
 end
 
@@ -231,7 +245,7 @@ end
 USpr = sparse(XT,YT,ST);
 
 Factor.U = USpr;
-clear USpr;
+clear USpr LRU;
 %---------------------------------------------------------------
 %   Right factors construction
 %            H
@@ -245,6 +259,7 @@ for ell = 1:levels
     npxx = npxx/2;
     npkk = npkk*2;
     Hcur = cell(npkk,npxx);
+    LRVcur = cell(npkk,npxx);
     
     for k = 1:npkk
         
@@ -258,15 +273,24 @@ for ell = 1:levels
         LagrangeMat = fbf_Lagrange(kpargrid,kgrid);
         
         for x = 1:npxx
+            xchild1 = 2*x-1;
             xcen1 = xbox(1)+(2*x-3/2)*(xbox(2)-xbox(1))/npxx/2;
             HcurU = repmat((1./fun(xcen1,kpargrid)).',[1 NG]).*LagrangeMat.*repmat(fun(xcen1,kgrid),[NG 1]);
+            HcurU = LRV{kpar,xchild1}*HcurU;
             
+            xchild2 = 2*x;
             xcen2 = xbox(1)+(2*x-1/2)*(xbox(2)-xbox(1))/npxx/2;
             HcurD = repmat((1./fun(xcen2,kpargrid)).',[1 NG]).*LagrangeMat.*repmat(fun(xcen2,kgrid),[NG 1]);
+            HcurD = LRV{kpar,xchild2}*HcurD;
             
             Hcur{k,x} = [HcurU; HcurD];
+            [Utmp,Stmp,Vtmp] = svdtrunc([HcurU; HcurD],tol);
+            Hcur{k,x} = Utmp;
+            LRVcur{k,x} = Stmp*Vtmp';
         end
     end
+    
+    LRV = LRVcur;
     
     totalel = 0;
     for k = 1:npkk
@@ -321,7 +345,7 @@ for ell = 1:levels
 end
 
 Factor.HTol = HTol;
-clear HTol;
+clear HTol LRVcur;
 
 %           V
 
@@ -339,6 +363,7 @@ for k = 1:npkk
     for x = 1:npxx
         xcen = xbox(1)+(x-1/2)*(xbox(2)-xbox(1))/npxx;
         Vcell{k,x} = repmat((1./fun(xcen,kgrid)).',[1 size(kksub,1)]).*LagrangeMat.*repmat(fun(xcen,kksub),[NG 1]);
+        Vcell{k,x} = LRV{k,x}*Vcell{k,x};
     end
 end
 
@@ -375,6 +400,6 @@ end
 VSpr = sparse(XT,YT,ST);
 
 Factor.V = VSpr;
-clear VSpr;
+clear VSpr LRV;
 
 end
