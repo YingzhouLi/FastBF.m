@@ -1,0 +1,16 @@
+*.o
+*.d
+*.a
+*~
+*#
+.DS*
+*.swp
+*.aux
+*.bbl
+*.log
+*.out
+*.gz
+*.bin
+*.blg
+*.mat
+build
