@@ -121,13 +121,11 @@ for ell = 1:levels
         for k = 1:npkk
             kchild1 = 2*k-1;
             kcen1 = kbox(1)+(2*k-3/2)*(kbox(2)-kbox(1))/npkk/2;
-            GcurL = repmat(fun(xgrid,kcen1),[1 NG]).*LagrangeMat.*repmat((1./fun(xpargrid,kcen1)).',[NG 1]);
-            GcurL = GcurL*LRU{xpar,kchild1};
+            GcurL = diag(fun(xgrid,kcen1))*(LagrangeMat*(diag(1./fun(xpargrid,kcen1))*LRU{xpar,kchild1}));
             
             kchild2 = 2*k;
             kcen2 = kbox(1)+(2*k-1/2)*(kbox(2)-kbox(1))/npkk/2;
-            GcurR = repmat(fun(xgrid,kcen2),[1 NG]).*LagrangeMat.*repmat((1./fun(xpargrid,kcen2)).',[NG 1]);
-            GcurR = GcurR*LRU{xpar,kchild2};
+            GcurR = diag(fun(xgrid,kcen2))*(LagrangeMat*(diag(1./fun(xpargrid,kcen2))*LRU{xpar,kchild2}));
             
             [Utmp,Stmp,Vtmp] = svdtrunc([GcurL GcurR],tol);
             Gcur{x,k} = Vtmp';
@@ -207,8 +205,7 @@ for x = 1:npxx
     
     for k = 1:npkk
         kcen = kbox(1)+(k-1/2)*(kbox(2)-kbox(1))/npkk;
-        Ucell{x,k} = repmat(fun(xxsub,kcen),[1 NG]).*LagrangeMat.*repmat((1./fun(xgrid,kcen)).',[size(xxsub,1) 1]);
-        Ucell{x,k} = Ucell{x,k}*LRU{x,k};
+        Ucell{x,k} = diag(fun(xxsub,kcen))*(LagrangeMat*(diag(1./fun(xgrid,kcen))*LRU{x,k}));
     end
 end
 
@@ -275,15 +272,12 @@ for ell = 1:levels
         for x = 1:npxx
             xchild1 = 2*x-1;
             xcen1 = xbox(1)+(2*x-3/2)*(xbox(2)-xbox(1))/npxx/2;
-            HcurU = repmat((1./fun(xcen1,kpargrid)).',[1 NG]).*LagrangeMat.*repmat(fun(xcen1,kgrid),[NG 1]);
-            HcurU = LRV{kpar,xchild1}*HcurU;
+            HcurU = LRV{kpar,xchild1}*diag(1./fun(xcen1,kpargrid))*LagrangeMat*diag(fun(xcen1,kgrid));
             
             xchild2 = 2*x;
             xcen2 = xbox(1)+(2*x-1/2)*(xbox(2)-xbox(1))/npxx/2;
-            HcurD = repmat((1./fun(xcen2,kpargrid)).',[1 NG]).*LagrangeMat.*repmat(fun(xcen2,kgrid),[NG 1]);
-            HcurD = LRV{kpar,xchild2}*HcurD;
+            HcurD = LRV{kpar,xchild2}*diag(1./fun(xcen2,kpargrid))*LagrangeMat*diag(fun(xcen2,kgrid));
             
-            Hcur{k,x} = [HcurU; HcurD];
             [Utmp,Stmp,Vtmp] = svdtrunc([HcurU; HcurD],tol);
             Hcur{k,x} = Utmp;
             LRVcur{k,x} = Stmp*Vtmp';
@@ -362,8 +356,7 @@ for k = 1:npkk
     
     for x = 1:npxx
         xcen = xbox(1)+(x-1/2)*(xbox(2)-xbox(1))/npxx;
-        Vcell{k,x} = repmat((1./fun(xcen,kgrid)).',[1 size(kksub,1)]).*LagrangeMat.*repmat(fun(xcen,kksub),[NG 1]);
-        Vcell{k,x} = LRV{k,x}*Vcell{k,x};
+        Vcell{k,x} = LRV{k,x}*diag(1./fun(xcen,kgrid))*LagrangeMat*diag(fun(xcen,kksub));
     end
 end
 

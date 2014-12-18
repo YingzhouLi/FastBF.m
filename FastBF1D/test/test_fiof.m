@@ -14,7 +14,7 @@ if(~exist(log_path, 'dir'))
 end
 
 
-for i=8:2:10
+for i=10:2:10
 %% Set up parameters
 N = 2^i; %powers of 2 from 64 to 65536;
 tol = 1e-3;
@@ -28,7 +28,7 @@ xbox = [0,(N-1)/N];
 x = (0:N-1)/N;
 xx = x(:);
 
-func_name = 'funF';
+func_name = 'fun0';
 switch func_name
 case 'funF'
     fun = @(x,k)funF(N,x,k);
