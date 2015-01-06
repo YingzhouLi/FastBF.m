@@ -62,7 +62,7 @@ end
 totalel = 0;
 for x=1:npx
     for k=1:npk
-        totalel = totalel + numel(Mcell{x,k});
+        totalel = totalel + Mcell{x,k};
     end
 end
 
