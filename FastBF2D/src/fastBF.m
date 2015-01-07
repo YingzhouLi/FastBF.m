@@ -10,15 +10,6 @@ npx2 = 2^ceil(log2(sqrt(Nx)));
 npk1 = 2^ceil(log2(sqrt(Nk)));
 npk2 = 2^ceil(log2(sqrt(Nk)));
 levels = floor(log2(Nx/npx1/NG));
-LagrangeMatCell = cell(2,1);
-LagrangeMatCell{1} = fbf_Lagrange(grid,grid/2);
-LagrangeMatCell{2} = fbf_Lagrange(grid,grid/2+1/2);
-TensorLagrangeMatCell = cell(2,2);
-for a = 1:2
-for b = 1:2
-    TensorLagrangeMatCell{a,b} = kron(LagrangeMatCell{b},LagrangeMatCell{a});
-end
-end
 Factor = struct('U',[],'GTol',[],'M',[],'HTol',[],'V',[]);
 
 x1box = xbox(1,:);

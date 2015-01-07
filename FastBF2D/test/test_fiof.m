@@ -1,6 +1,6 @@
-% close all;
-% clear all;
-% clc;
+close all;
+clear all;
+clc;
 
 addpath('../src/');
 data_path = './data/';
