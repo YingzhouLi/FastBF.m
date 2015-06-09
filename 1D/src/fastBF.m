@@ -101,14 +101,14 @@ npxx = npx;
 npkk = npk;
 
 for ell = 1:levels
-    
+
     npxx = npxx*2;
     npkk = npkk/2;
     Gcur = cell(npxx,npkk);
     LRUcur = cell(npxx,npkk);
-    
+
     for x = 1:npxx
-        
+
         xlen = (xbox(2)-xbox(1))/npxx;
         xs = xbox(1)+(x-1)*xlen;
         xpar = floor((x-1)/2)+1;
@@ -117,31 +117,33 @@ for ell = 1:levels
         xgrid = grid*xlen+xs;
         xpargrid = grid*xparlen+xpars;
         LagrangeMat = fbf_Lagrange(xpargrid,xgrid).';
-        
+
         for k = 1:npkk
             kchild1 = 2*k-1;
             kcen1 = kbox(1)+(2*k-3/2)*(kbox(2)-kbox(1))/npkk/2;
-            GcurL = diag(fun(xgrid,kcen1))*(LagrangeMat*(diag(1./fun(xpargrid,kcen1))*LRU{xpar,kchild1}));
-            
+            GcurL = diag(fun(xgrid,kcen1))*(LagrangeMat*...
+                    (diag(1./fun(xpargrid,kcen1))*LRU{xpar,kchild1}));
+
             kchild2 = 2*k;
             kcen2 = kbox(1)+(2*k-1/2)*(kbox(2)-kbox(1))/npkk/2;
-            GcurR = diag(fun(xgrid,kcen2))*(LagrangeMat*(diag(1./fun(xpargrid,kcen2))*LRU{xpar,kchild2}));
-            
+            GcurR = diag(fun(xgrid,kcen2))*(LagrangeMat*...
+                    (diag(1./fun(xpargrid,kcen2))*LRU{xpar,kchild2}));
+
             [Utmp,Stmp,Vtmp] = svdtrunc([GcurL GcurR],tol);
             Gcur{x,k} = Vtmp';
             LRUcur{x,k} = Utmp*Stmp;
         end
     end
-    
+
     LRU = LRUcur;
-    
+
     totalel = 0;
     for x = 1:npxx
         for k = 1:npkk
             totalel = totalel + numel(Gcur{x,k});
         end
     end
-    
+
     offset = 0;
     curH = 0;
     curW = 0;
@@ -184,7 +186,7 @@ for ell = 1:levels
         curW = localW;
     end
     GTol{ell} = sparse(XT,YT,ST);
-    
+
 end
 
 Factor.GTol = GTol;
@@ -195,17 +197,18 @@ clear GTol LRUcur Gcur;
 Ucell = cell(npxx,npkk);
 
 for x = 1:npxx
-    
+
     xidx = (1:Nx/npxx)+Nx/npxx*(x-1);
     xxsub = xx(xidx);
     xlen = (xbox(2)-xbox(1))/npxx;
     xs = xbox(1)+(x-1)*xlen;
     xgrid = grid*xlen+xs;
     LagrangeMat = fbf_Lagrange(xgrid,xxsub).';
-    
+
     for k = 1:npkk
         kcen = kbox(1)+(k-1/2)*(kbox(2)-kbox(1))/npkk;
-        Ucell{x,k} = diag(fun(xxsub,kcen))*(LagrangeMat*(diag(1./fun(xgrid,kcen))*LRU{x,k}));
+        Ucell{x,k} = diag(fun(xxsub,kcen))*(LagrangeMat*...
+                     (diag(1./fun(xgrid,kcen))*LRU{x,k}));
     end
 end
 
@@ -252,14 +255,14 @@ npxx = npx;
 npkk = npk;
 
 for ell = 1:levels
-    
+
     npxx = npxx/2;
     npkk = npkk*2;
     Hcur = cell(npkk,npxx);
     LRVcur = cell(npkk,npxx);
-    
+
     for k = 1:npkk
-        
+
         klen = (kbox(2)-kbox(1))/npkk;
         ks = kbox(1)+(k-1)*klen;
         kpar = floor((k-1)/2)+1;
@@ -268,31 +271,33 @@ for ell = 1:levels
         kgrid = grid*klen+ks;
         kpargrid = grid*kparlen+kpars;
         LagrangeMat = fbf_Lagrange(kpargrid,kgrid);
-        
+
         for x = 1:npxx
             xchild1 = 2*x-1;
             xcen1 = xbox(1)+(2*x-3/2)*(xbox(2)-xbox(1))/npxx/2;
-            HcurU = LRV{kpar,xchild1}*diag(1./fun(xcen1,kpargrid))*LagrangeMat*diag(fun(xcen1,kgrid));
-            
+            HcurU = LRV{kpar,xchild1}*diag(1./fun(xcen1,kpargrid))*...
+                    LagrangeMat*diag(fun(xcen1,kgrid));
+
             xchild2 = 2*x;
             xcen2 = xbox(1)+(2*x-1/2)*(xbox(2)-xbox(1))/npxx/2;
-            HcurD = LRV{kpar,xchild2}*diag(1./fun(xcen2,kpargrid))*LagrangeMat*diag(fun(xcen2,kgrid));
-            
+            HcurD = LRV{kpar,xchild2}*diag(1./fun(xcen2,kpargrid))*...
+                    LagrangeMat*diag(fun(xcen2,kgrid));
+
             [Utmp,Stmp,Vtmp] = svdtrunc([HcurU; HcurD],tol);
             Hcur{k,x} = Utmp;
             LRVcur{k,x} = Stmp*Vtmp';
         end
     end
-    
+
     LRV = LRVcur;
-    
+
     totalel = 0;
     for k = 1:npkk
         for x = 1:npxx
             totalel = totalel + numel(Hcur{k,x});
         end
     end
-    
+
     offset = 0;
     curH = 0;
     curW = 0;
@@ -335,7 +340,7 @@ for ell = 1:levels
         curH = localH;
     end
     HTol{ell} = sparse(XT,YT,ST);
-    
+
 end
 
 Factor.HTol = HTol;
@@ -346,17 +351,18 @@ clear HTol LRVcur;
 Vcell = cell(npkk,npxx);
 
 for k = 1:npkk
-    
+
     kidx = (1:Nk/npkk)+Nk/npkk*(k-1);
     kksub = kk(kidx);
     klen = (kbox(2)-kbox(1))/npkk;
     ks = kbox(1)+(k-1)*klen;
     kgrid = grid*klen+ks;
     LagrangeMat = fbf_Lagrange(kgrid,kksub);
-    
+
     for x = 1:npxx
         xcen = xbox(1)+(x-1/2)*(xbox(2)-xbox(1))/npxx;
-        Vcell{k,x} = LRV{k,x}*diag(1./fun(xcen,kgrid))*LagrangeMat*diag(fun(xcen,kksub));
+        Vcell{k,x} = LRV{k,x}*diag(1./fun(xcen,kgrid))*LagrangeMat*...
+                     diag(fun(xcen,kksub));
     end
 end
 

@@ -1,9 +1,7 @@
 function res = fbf_Lagrange(gs,ts)
-%gs - grid points
-%ts - test points
   NG = size(gs,1);
   NT = size(ts,1);
-  
+
   tmp = zeros(NG,NT);
   for a=1:NG
       gud = [1:a-1 a+1:NG];
@@ -13,4 +11,4 @@ function res = fbf_Lagrange(gs,ts)
       end
   end
   res = tmp;
-end  
+end
