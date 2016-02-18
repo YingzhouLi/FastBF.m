@@ -130,6 +130,8 @@ for ell = 1:levels
                     (diag(1./fun(xpargrid,kcen2))*LRU{xpar,kchild2}));
 
             [Utmp,Stmp,Vtmp] = svdtrunc([GcurL GcurR],tol);
+            %disp( size(GcurL,1) );
+            %disp( size(Vtmp) );
             Gcur{x,k} = Vtmp';
             LRUcur{x,k} = Utmp*Stmp;
         end

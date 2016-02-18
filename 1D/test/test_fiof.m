@@ -14,22 +14,22 @@ if(~exist(log_path, 'dir'))
 end
 
 
-for i=10:2:10
+for i=12:2:12
 %% Set up parameters
 N = 2^i; %powers of 2 from 64 to 65536;
-tol = 1e-8;
-NG = 12;  % number of Chebyshev pts
+tol = 1e-4;
+NG = 8;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1];
 k = -N/2:N/2-1;
 kk = k(:);
 
 xbox = [0,(N-1)/N];
-%x = (0:N-1)/N;
-x = sort(rand(N,1)*(N-1)/N);
+x = (0:N-1)/N;
+%x = sort(rand(N,1)*(N-1)/N);
 xx = x(:);
 
-func_name = 'funF';
+func_name = 'fun0';
 switch func_name
 case 'funF'
     fun = @(x,k)funF(N,x,k);
