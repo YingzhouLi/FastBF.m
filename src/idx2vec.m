@@ -4,7 +4,7 @@ n = length(siz);
 x = zeros(1,n);
 siz = cumprod(siz);
 
-assert(iter <= siz(end),'The iter is out of the range');
+%assert(iter <= siz(end),'The iter is out of the range');
 
 for i = 1:n-1
     x(i) = mod(iter-1,siz(i))+1;

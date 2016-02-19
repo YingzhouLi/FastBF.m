@@ -23,11 +23,12 @@ xxC = [xxC;zeros(1,size(xxC,2))];
 xxIA = [xxIA;size(xx,1)+1];
 for itx = 1:prod(npxx)
     x = idx2vec(npxx,itx);
-    if x ~= xxC(itx,:)
+    if any(x ~= xxC(itx,:))
         xxC = [xxC(1:itx-1,:);x;xxC(itx:end,:)];
         xxIA = [xxIA(1:itx-1);xxIA(itx);xxIA(itx:end)];
     end
 end
+
 
 
 kkboxidx = zeros(size(kk));
@@ -42,7 +43,7 @@ kkC = [kkC;zeros(1,size(kkC,2))];
 kkIA = [kkIA;size(kk,1)+1];
 for itk = 1:prod(npkk)
     k = idx2vec(npkk,itk);
-    if k ~= kkC(itk,:)
+    if any(k ~= kkC(itk,:))
         kkC = [kkC(1:itk-1,:);k;kkC(itk:end,:)];
         kkIA = [kkIA(1:itk-1);kkIA(itk);kkIA(itk:end)];
     end
@@ -222,7 +223,7 @@ for itx = 1:prod(npx)
         end
     end
 end
-Factor.M = sparse(XT,YT,ST);
+Factor.M = sparse(XT,YT,ST,totalH,totalW);
 
 
 %---------------------------------------------------------------
@@ -285,7 +286,7 @@ for ell = 1:levels
             end
         end
     end
-    Factor.GTol{ell} = sparse(XT,YT,ST);
+    Factor.GTol{ell} = sparse(XT,YT,ST,totalH,totalW);
 end
 
 %---------------------------------------------------------------
@@ -299,6 +300,8 @@ for itx = 1:prod(npxx)
         totalel = totalel + numel(Ucell{itx,itk});
     end
 end
+
+totalH = size(xx,1);
 
 totalW = 0;
 offsetW = zeros(prod(npxx),prod(npkk));
@@ -329,7 +332,7 @@ for itx = 1:prod(npxx)
         end
     end
 end
-Factor.U = sparse(XT,YT,ST);
+Factor.U = sparse(XT,YT,ST,totalH,totalW);
 
 %---------------------------------------------------------------
 %   H assembling
@@ -391,7 +394,7 @@ for ell = 1:levels
             end
         end
     end
-    Factor.HTol{ell} = sparse(XT,YT,ST);
+    Factor.HTol{ell} = sparse(XT,YT,ST,totalH,totalW);
 end
 
 %---------------------------------------------------------------
@@ -415,6 +418,8 @@ for itk = 1:prod(npkk)
     end
 end
 
+totalW = size(kk,1);
+
 XT = zeros(totalel,1);
 YT = zeros(totalel,1);
 ST = zeros(totalel,1);
@@ -435,6 +440,6 @@ for itk = 1:prod(npkk)
         end
     end
 end
-Factor.V = sparse(XT,YT,ST);
+Factor.V = sparse(XT,YT,ST,totalH,totalW);
 
 end

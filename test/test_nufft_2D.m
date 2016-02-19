@@ -19,7 +19,7 @@ end
 i = 5;
 N = 2^i;
 tol = 1e-4;
-NG = 4;  % number of Chebyshev pts
+NG = 2;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1;-N/2,N/2-1]';
 k1 = rand(N,1)*(N-1)-N/2;
