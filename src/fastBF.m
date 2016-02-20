@@ -107,9 +107,7 @@ for itx = 1:prod(npxx)
     x = idx2vec(npxx,itx);
     [xgrid,xLgrid] = fbf_grid(x,npxx,grid,xbox);
     xxsub = xx(xxidx(xxIA(itx):xxIA(itx+1)-1),:);
-
     LagrangeMat = fbf_Lagrange(xLgrid,xxsub).';
-
     for itk = 1:prod(npkk)
         k = idx2vec(npkk,itk);
         kcen = kbox(1,:)+(k-1/2).*(kbox(2,:)-kbox(1,:))./npkk;
@@ -152,7 +150,6 @@ for itk = 1:prod(npkk)
     k = idx2vec(npkk,itk);
     [kgrid,kLgrid] = fbf_grid(k,npkk,grid,kbox);
     kksub = kk(kkidx(kkIA(itk):kkIA(itk+1)-1),:);
-
     LagrangeMat = fbf_Lagrange(kLgrid,kksub);
 
     for itx = 1:prod(npxx)
@@ -168,7 +165,10 @@ end
 % The compression is split into two parts: outward compression
 % and inward compression
 
-% TODO
+[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_outComp(levels,npx,npk,tol,...
+                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
+[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
+                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
 
 %==============================================================
 % Sparse matrix assembling

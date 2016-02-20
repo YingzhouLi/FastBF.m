@@ -14,9 +14,9 @@ if(~exist(log_path, 'dir'))
 end
 
 % Set up parameters
-i=8;
+i = 8;
 N = 2^i;
-tol = 1e-4;
+tol = 1e-2;
 NG = 4;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1]';
@@ -27,7 +27,7 @@ xbox = [0,(N-1)/N]';
 x = (0:N-1)/N;
 xx = x(:);
 
-func_name = 'funF';
+func_name = 'fun0';
 switch func_name
 case 'funF'
     fun = @(x,k)funF(x,k);

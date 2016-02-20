@@ -33,6 +33,8 @@ xx = [x1(:) x2(:)];
 
 func_name = 'fun0';
 switch func_name
+case 'funF'
+    fun = @(x,k)funF(x,k);
 case 'fun0'
     fun = @(x,k)fun0_2D(x,k);
 case 'fun1'
