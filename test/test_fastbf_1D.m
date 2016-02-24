@@ -29,8 +29,10 @@ xx = x(:);
 
 func_name = 'fun0';
 switch func_name
-case 'funF'
-    fun = @(x,k)funF(x,k);
+case 'funFT'
+    fun = @(x,k)funFT(x,k);
+case 'funIFT'
+    fun = @(x,k)funIFT(x,k);
 case 'fun0'
     fun = @(x,k)fun0_1D(x,k);
 end

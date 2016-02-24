@@ -33,8 +33,7 @@ x2 = rand(N,1)*(N-1)/N;
 [x1,x2] = ndgrid(x1,x2);
 xx = [x1(:) x2(:)];
 
-fun = @(x,k)funF(x,k);
-
+fun = @(x,k)funFT(x,k);
 
 if(1)
     f = randn(N,N) + sqrt(-1)*randn(N,N);

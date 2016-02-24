@@ -27,7 +27,7 @@ xbox = [0,(N-1)/N]';
 %xx = ((0:N-1)/N)';
 xx = rand(N,1)*(N-1)/N;
 
-fun = @(x,k)funF(N,x,k);
+fun = @(x,k)funFT(x,k);
 
 if(1)
     f = randn(N,1) + sqrt(-1)*randn(N,1);
