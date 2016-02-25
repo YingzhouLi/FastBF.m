@@ -167,8 +167,8 @@ end
 
 [Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_outComp(levels,npx,npk,tol,...
                                             Mcell,GTolcell,Ucell,HTolcell,Vcell);
-[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
-                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
+%[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
+%                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
 
 %==============================================================
 % Sparse matrix assembling

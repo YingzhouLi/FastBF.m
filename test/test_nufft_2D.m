@@ -18,20 +18,26 @@ end
 % Set up parameters
 i = 5;
 N = 2^i;
-tol = 1e-4;
-NG = 2;  % number of Chebyshev pts
+tol = 1e-9;
+NG = 8;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1;-N/2,N/2-1]';
-k1 = rand(N,1)*(N-1)-N/2;
-k2 = rand(N,1)*(N-1)-N/2;
-[k1,k2] = ndgrid(k1,k2);
-kk = [k1(:) k2(:)];
+if(0)
+    kk = rand(N^2,2)*(N-1)-N/2;
+else
+    k = -N/2:N/2-1;
+    [k1,k2] = ndgrid(k);
+    kk = [k1(:) k2(:)];
+end
 
 xbox = [0,(N-1)/N;0,(N-1)/N]';
-x1 = rand(N,1)*(N-1)/N;
-x2 = rand(N,1)*(N-1)/N;
-[x1,x2] = ndgrid(x1,x2);
-xx = [x1(:) x2(:)];
+if(1)
+    xx = rand(N^2,2)*(N-1)/N;
+else
+    x = (0:N-1)/N;
+    [x1,x2] = ndgrid(x);
+    xx = [x1(:) x2(:)];
+end
 
 fun = @(x,k)funFT(x,k);
 
