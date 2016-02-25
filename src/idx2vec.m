@@ -2,7 +2,6 @@ function x = idx2vec(siz,iter)
 
 n = length(siz);
 x = zeros(1,n);
-siz = cumprod(siz);
 
 %assert(iter <= siz(end),'The iter is out of the range');
 
