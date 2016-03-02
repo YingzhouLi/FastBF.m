@@ -36,18 +36,25 @@ for ell = 1:levels
     end
     
     Lcell = cell(prod(npxx),prod(npkk));
+    itkchildcell = zeros(prod(npkk),2^Dim);
+    for itk = 1:prod(npkk)
+        for it_child = 1:2^Dim
+            itkchildcell(itk,it_child) = ...
+                vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itx = 1:prod(npxx)
         for itk = 1:prod(npkk)
             tmpMat = [];
             for it_child = 1:2^Dim
-                itk_child = vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itk_child = itkchildcell(itk,it_child);
                 tmpMat = [ tmpMat GTolcell{ell}{itx,itk_child} ];
             end
             [U,S,V] = svdtrunc(tmpMat,tol);
             Lcell{itx,itk} = U*S;
             offset = 0;
             for it_child = 1:2^Dim
-                itk_child = vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itk_child = itkchildcell(itk,it_child);
                 wid = size(GTolcell{ell}{itx,itk_child},2);
                 GTolcell{ell}{itx,itk_child} = V(offset+(1:wid),:)';
                 offset = offset+wid;
@@ -85,18 +92,25 @@ for ell = 1:levels
     end
     
     Rcell = cell(prod(npkk),prod(npxx));
+    itxchildcell = zeros(prod(npxx),2^Dim);
+    for itx = 1:prod(npxx)
+        for it_child = 1:2^Dim
+            itxchildcell(itx,it_child) = ...
+                vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itk = 1:prod(npkk)
         for itx = 1:prod(npxx)
             tmpMat = [];
             for it_child = 1:2^Dim
-                itx_child = vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itx_child = itxchildcell(itx,it_child);
                 tmpMat = [ tmpMat; HTolcell{ell}{itk,itx_child} ];
             end
             [U,S,V] = svdtrunc(tmpMat,tol);
             Rcell{itk,itx} = S*V';
             offset = 0;
             for it_child = 1:2^Dim
-                itx_child = vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itx_child = itxchildcell(itx,it_child);
                 hgh = size(HTolcell{ell}{itk,itx_child},1);
                 HTolcell{ell}{itk,itx_child} = U(offset+(1:hgh),:);
                 offset = offset+hgh;

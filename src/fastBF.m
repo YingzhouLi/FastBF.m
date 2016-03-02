@@ -6,6 +6,7 @@ grid = Chey_grid(NG);
 [Nk,~  ] = size(kk);
 Nx = Nx^(1/Dim)*ones(1,Dim);
 Nk = Nk^(1/Dim)*ones(1,Dim);
+NGD = NG^Dim;
 
 npx = 2.^ceil(log2(sqrt(Nx))+0.5);
 npk = 2.^ceil(log2(sqrt(Nk))+0.5);
@@ -62,13 +63,21 @@ Factor = struct('U',[],'GTol',[],'M',[],'HTol',[],'V',[]);
 %   M construction
 
 Mcell = cell(prod(npx),prod(npk));
-
+xgridcell = cell(prod(npx),1);
+kgridcell = cell(prod(npk),1);
 for itx = 1:prod(npx)
     x = idx2vec(npx,itx);
+    xgridcell{itx} = fbf_grid(x,npx,grid,xbox);
+end
+for itk = 1:prod(npk)
+    k = idx2vec(npk,itk);
+    kgridcell{itk} = fbf_grid(k,npk,grid,kbox);
+end
+
+for itx = 1:prod(npx)
     for itk = 1:prod(npk)
-        k = idx2vec(npk,itk);
-        xgrid = fbf_grid(x,npx,grid,xbox);
-        kgrid = fbf_grid(k,npk,grid,kbox);
+        xgrid = xgridcell{itx};
+        kgrid = kgridcell{itk};
         Mcell{itx,itk} = fun(xgrid,kgrid);
     end
 end
@@ -76,22 +85,36 @@ end
 %---------------------------------------------------------------
 %   G construction
 
+
 GTolcell = cell(levels,1);
 for ell = 1:levels
     npxx = npx*2^ell;
     npkk_child = npk/2^(ell-1);
+    
+    LagrangeMatCell = cell(2^Dim);
+    for it_child = 1:2^Dim
+        [xgrid,~] = fbf_grid(idx2vec(2*ones(1,Dim),it_child),npxx,grid,xbox);
+        [~,xparLgrid] = fbf_grid(ones(1,Dim),npxx/2,grid,xbox);
+        LagrangeMatCell{it_child} = fbf_Lagrange(xparLgrid,xgrid).';
+    end
+    
     GTolcell{ell} = cell(prod(npxx),prod(npkk_child));
+    kchildcell = cell(prod(npkk_child),1);
+    for itk_child = 1:prod(npkk_child)
+        kchildcell{itk_child} = idx2vec(npkk_child,itk_child);
+    end
     for itx = 1:prod(npxx)
         x = idx2vec(npxx,itx);
         [xgrid,~] = fbf_grid(x,npxx,grid,xbox);
-        [xpargrid,xparLgrid] = fbf_grid(floor((x-1)/2)+1,npxx/2,grid,xbox);
-        LagrangeMat = fbf_Lagrange(xparLgrid,xgrid).';
+        [xpargrid,~] = fbf_grid(floor((x-1)/2)+1,npxx/2,grid,xbox);
+        it_child = vec2idx(2*ones(1,Dim),x-2*floor((x-1)/2));
+        LagrangeMat = LagrangeMatCell{it_child};
         for itk_child = 1:prod(npkk_child)
-            k_child = idx2vec(npkk_child,itk_child);
+            k_child = kchildcell{itk_child};
             kcen_child = kbox(1,:)+(k_child-1/2).*(kbox(2,:)-kbox(1,:))./npkk_child;
             GTolcell{ell}{itx,itk_child} = ...
-                diag(fun(xgrid,kcen_child))*(LagrangeMat*...
-                (diag(1./fun(xpargrid,kcen_child))));
+                sparse(1:NGD,1:NGD,fun(xgrid,kcen_child))*(LagrangeMat*...
+                    sparse(1:NGD,1:NGD,1./fun(xpargrid,kcen_child)));
         end
     end
 end
@@ -102,17 +125,21 @@ end
 npxx = npx*2^levels;
 npkk = npk/2^levels;
 Ucell = cell(prod(npxx),prod(npkk));
-
+kcell = cell(prod(npkk),1);
+for itk = 1:prod(npkk)
+    kcell{itk} = idx2vec(npkk,itk);
+end
 for itx = 1:prod(npxx)
     x = idx2vec(npxx,itx);
     [xgrid,xLgrid] = fbf_grid(x,npxx,grid,xbox);
     xxsub = xx(xxidx(xxIA(itx):xxIA(itx+1)-1),:);
     LagrangeMat = fbf_Lagrange(xLgrid,xxsub).';
     for itk = 1:prod(npkk)
-        k = idx2vec(npkk,itk);
+        k = kcell{itk};
         kcen = kbox(1,:)+(k-1/2).*(kbox(2,:)-kbox(1,:))./npkk;
         Ucell{itx,itk} = ...
-            diag(fun(xxsub,kcen))*(LagrangeMat*(diag(1./fun(xgrid,kcen))));
+            sparse(1:size(xxsub,1),1:size(xxsub,1),fun(xxsub,kcen))...
+            *(LagrangeMat*(sparse(1:NGD,1:NGD,1./fun(xgrid,kcen))));
     end
 end
 
@@ -123,18 +150,31 @@ HTolcell = cell(levels,1);
 for ell = 1:levels
     npkk = npk*2^ell;
     npxx_child = npx/2^(ell-1);
+    
+    LagrangeMatCell = cell(2^Dim);
+    for it_child = 1:2^Dim
+        [kgrid,~] = fbf_grid(idx2vec(2*ones(1,Dim),it_child),npkk,grid,kbox);
+        [~,kparLgrid] = fbf_grid(ones(1,Dim),npkk/2,grid,kbox);
+        LagrangeMatCell{it_child} = fbf_Lagrange(kparLgrid,kgrid);
+    end
+    
     HTolcell{ell} = cell(prod(npkk),prod(npxx_child));
+    xchildcell = cell(prod(npxx_child),1);
+    for itx_child = 1:prod(npxx_child)
+        xchildcell{itx_child} = idx2vec(npxx_child,itx_child);
+    end
     for itk = 1:prod(npkk)
         k = idx2vec(npkk,itk);
         kgrid = fbf_grid(k,npkk,grid,kbox);
-        [kpargrid,kparLgrid] = fbf_grid(floor((k-1)/2)+1,npkk/2,grid,kbox);
-        LagrangeMat = fbf_Lagrange(kparLgrid,kgrid);
+        [kpargrid,~] = fbf_grid(floor((k-1)/2)+1,npkk/2,grid,kbox);
+        it_child = vec2idx(2*ones(1,Dim),k-2*floor((k-1)/2));
+        LagrangeMat = LagrangeMatCell{it_child};
         for itx_child = 1:prod(npxx_child)
-            x_child = idx2vec(npxx_child,itx_child);
+            x_child = xchildcell{itx_child};
             xcen_child = xbox(1,:)+(x_child-1/2).*(xbox(2,:)-xbox(1,:))./npxx_child;
             HTolcell{ell}{itk,itx_child} = ...
-                diag(1./fun(xcen_child,kpargrid))*LagrangeMat*...
-                diag(fun(xcen_child,kgrid));
+                sparse(1:NGD,1:NGD,1./fun(xcen_child,kpargrid))*LagrangeMat*...
+                sparse(1:NGD,1:NGD,fun(xcen_child,kgrid));
         end
     end
 end
@@ -145,18 +185,21 @@ end
 npkk = npk*2^levels;
 npxx = npx/2^levels;
 Vcell = cell(prod(npkk),prod(npxx));
-
+xcell = cell(prod(npxx),1);
+for itx = 1:prod(npxx)
+    xcell{itx} = idx2vec(npxx,itx);
+end
 for itk = 1:prod(npkk)
     k = idx2vec(npkk,itk);
     [kgrid,kLgrid] = fbf_grid(k,npkk,grid,kbox);
     kksub = kk(kkidx(kkIA(itk):kkIA(itk+1)-1),:);
     LagrangeMat = fbf_Lagrange(kLgrid,kksub);
-
     for itx = 1:prod(npxx)
-        x = idx2vec(npxx,itx);
+        x = xcell{itx};
         xcen = xbox(1,:)+(x-1/2).*(xbox(2,:)-xbox(1,:))./npxx;
         Vcell{itk,itx} = ...
-            diag(1./fun(xcen,kgrid))*LagrangeMat*diag(fun(xcen,kksub));
+            sparse(1:NGD,1:NGD,1./fun(xcen,kgrid))*LagrangeMat*...
+            sparse(1:size(kksub,1),1:size(kksub,1),fun(xcen,kksub));
     end
 end
 
@@ -211,9 +254,8 @@ for itx = 1:prod(npx)
     for itk = 1:prod(npk)
         Mat = Mcell{itx,itk};
         [MatH,MatW] = size(Mat);
-        [X,Y] = meshgrid(offsetH(itx,itk)+(1:MatH),offsetW(itk,itx)+(1:MatW));
-        X = X';
-        Y = Y';
+        X = (offsetH(itx,itk)+(1:MatH))'*ones(1,MatW);
+        Y = ones(MatH,1)*(offsetW(itk,itx)+(1:MatW));
         idx = offset+(1:MatH*MatW);
         XT(idx) = X(:);
         YT(idx) = Y(:);
@@ -244,10 +286,17 @@ for ell = 1:levels
 
     totalH = 0;
     offsetH = zeros(prod(npxx),prod(npkk_child));
+    itkchildcell = zeros(prod(npkk),2^Dim);
+    for itk = 1:prod(npkk)
+        for it_child = 1:2^Dim
+            itkchildcell(itk,it_child) = ...
+                vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itx = 1:prod(npxx)
         for itk = 1:prod(npkk)
             for it_child = 1:2^Dim
-                itk_child = vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itk_child = itkchildcell(itk,it_child);
                 offsetH(itx,itk_child) = totalH;
             end
             totalH = totalH + size(GTolcell{ell}{itx,itk_child},1);
@@ -256,10 +305,17 @@ for ell = 1:levels
 
     totalW = 0;
     offsetW = zeros(prod(npxx),prod(npkk_child));
+    itxcell = zeros(prod(npxx_par),2^Dim);
+    for itx_par = 1:prod(npxx_par)
+        for it_child = 1:2^Dim
+            itxcell(itx_par,it_child) = ...
+                vec2idx(npxx,(idx2vec(npxx_par,itx_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itx_par = 1:prod(npxx_par)
         for itk_child = 1:prod(npkk_child)
             for it_child = 1:2^Dim
-                itx = vec2idx(npxx,(idx2vec(npxx_par,itx_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itx = itxcell(itx_par,it_child);
                 offsetW(itx,itk_child) = totalW;
             end
             totalW = totalW + size(GTolcell{ell}{itx,itk_child},2);
@@ -274,9 +330,8 @@ for ell = 1:levels
         for itk_child = 1:prod(npkk_child)
             Mat = GTolcell{ell}{itx,itk_child};
             [MatH,MatW] = size(Mat);
-            [X,Y] = meshgrid(offsetH(itx,itk_child)+(1:MatH),offsetW(itx,itk_child)+(1:MatW));
-            X = X';
-            Y = Y';
+            X = (offsetH(itx,itk_child)+(1:MatH))'*ones(1,MatW);
+            Y = ones(MatH,1)*(offsetW(itx,itk_child)+(1:MatW));
             idx = offset+(1:MatH*MatW);
             XT(idx) = X(:);
             YT(idx) = Y(:);
@@ -320,9 +375,8 @@ for itx = 1:prod(npxx)
     for itk = 1:prod(npkk)
         Mat = Ucell{itx,itk};
         [MatH,MatW] = size(Mat);
-        [X,Y] = meshgrid(xxidx(xxIA(itx):xxIA(itx+1)-1),offsetW(itx,itk)+(1:MatW));
-        X = X';
-        Y = Y';
+        X = (xxidx(xxIA(itx):xxIA(itx+1)-1))*ones(1,MatW);
+        Y = ones(MatH,1)*(offsetW(itx,itk)+(1:MatW));
         idx = offset+(1:MatH*MatW);
         XT(idx) = X(:);
         YT(idx) = Y(:);
@@ -352,10 +406,17 @@ for ell = 1:levels
 
     totalW = 0;
     offsetW = zeros(prod(npkk),prod(npxx_child));
+    itxchildcell = zeros(prod(npxx),2^Dim);
+    for itx = 1:prod(npxx)
+        for it_child = 1:2^Dim
+            itxchildcell(itx,it_child) = ...
+                vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itk = 1:prod(npkk)
         for itx = 1:prod(npxx)
             for it_child = 1:2^Dim
-                itx_child = vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itx_child = itxchildcell(itx,it_child);
                 offsetW(itk,itx_child) = totalW;
             end
             totalW = totalW + size(HTolcell{ell}{itk,itx_child},2);
@@ -364,10 +425,17 @@ for ell = 1:levels
 
     totalH = 0;
     offsetH = zeros(prod(npkk),prod(npxx_child));
+    itkcell = zeros(prod(npkk_par),2^Dim);
+    for itk_par = 1:prod(npkk_par)
+        for it_child = 1:2^Dim
+            itkcell(itk_par,it_child) = ...
+                vec2idx(npkk,(idx2vec(npkk_par,itk_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+        end
+    end
     for itk_par = 1:prod(npkk_par)
         for itx_child = 1:prod(npxx_child)
             for it_child = 1:2^Dim
-                itk = vec2idx(npkk,(idx2vec(npkk_par,itk_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                itk = itkcell(itk_par,it_child);
                 offsetH(itk,itx_child) = totalH;
             end
             totalH = totalH + size(HTolcell{ell}{itk,itx_child},1);
@@ -382,9 +450,8 @@ for ell = 1:levels
         for itx_child = 1:prod(npxx_child)
             Mat = HTolcell{ell}{itk,itx_child};
             [MatH,MatW] = size(Mat);
-            [X,Y] = meshgrid(offsetH(itk,itx_child)+(1:MatH),offsetW(itk,itx_child)+(1:MatW));
-            X = X';
-            Y = Y';
+            X = (offsetH(itk,itx_child)+(1:MatH))'*ones(1,MatW);
+            Y = ones(MatH,1)*(offsetW(itk,itx_child)+(1:MatW));
             idx = offset+(1:MatH*MatW);
             XT(idx) = X(:);
             YT(idx) = Y(:);
@@ -428,9 +495,8 @@ for itk = 1:prod(npkk)
     for itx = 1:prod(npxx)
         Mat = Vcell{itk,itx};
         [MatH,MatW] = size(Mat);
-        [X,Y] = meshgrid(offsetH(itk,itx)+(1:MatH),kkidx(kkIA(itk):kkIA(itk+1)-1));
-        X = X';
-        Y = Y';
+        X = (offsetH(itk,itx)+(1:MatH))'*ones(1,MatW);
+        Y = ones(MatH,1)*(kkidx(kkIA(itk):kkIA(itk+1)-1))';
         idx = offset+(1:MatH*MatW);
         XT(idx) = X(:);
         YT(idx) = Y(:);

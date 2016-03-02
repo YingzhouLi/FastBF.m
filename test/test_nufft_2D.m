@@ -5,10 +5,10 @@ clear all;
 addpath('../src/');
 
 % Set up parameters
-i = 6;
+i = 5;
 N = 2^i;
-tol = 1e-9;
-NG = 8;  % number of Chebyshev pts
+tol = 1e-6;
+NG = 6;  % number of Chebyshev pts
 
 kbox = [-N/2,N/2-1;-N/2,N/2-1]';
 if(0)
@@ -57,7 +57,7 @@ NC = 256;
 tic;
 relerr = fbf_check(N,fun,f,xx,kk,yy,NC);
 Td = toc;
-Td = Td*N/NC;
+Td = Td*N*N/NC;
 
 disp(['------------------------------------------']);
 disp(['N                 : ' num2str(N)]);

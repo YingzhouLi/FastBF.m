@@ -73,7 +73,7 @@ NC = 256;
 tic;
 relerr = fbf_check(N,fun,f,xx,kk,yy,NC);
 Td = toc;
-Td = Td*N/NC;
+Td = Td*N*N/NC;
 
 disp(['------------------------------------------']);
 disp(['N                 : ' num2str(N)]);
