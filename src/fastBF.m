@@ -1,4 +1,4 @@
-function Factor = fastBF(fun,xx,xbox,kk,kbox,NG,tol)
+function [Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol)
 
 grid = Chey_grid(NG);
 
@@ -208,10 +208,16 @@ end
 % The compression is split into two parts: outward compression
 % and inward compression
 
+nnz_init = fbf_nnz(levels,Mcell,GTolcell,Ucell,HTolcell,Vcell);
+
 [Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_outComp(levels,npx,npk,tol,...
                                             Mcell,GTolcell,Ucell,HTolcell,Vcell);
 %[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
 %                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
+
+nnz_comp = fbf_nnz(levels,Mcell,GTolcell,Ucell,HTolcell,Vcell);
+
+Rcomp = nnz_init/nnz_comp;
 
 %==============================================================
 % Sparse matrix assembling
