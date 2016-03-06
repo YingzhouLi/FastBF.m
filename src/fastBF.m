@@ -15,7 +15,7 @@ levels = max(0,min(floor(log2(Nx./npx./NG))));
 xxboxidx = zeros(size(xx));
 npxx = npx*2^levels;
 for i = 1:Dim
-    edges = linspace(xbox(1,i),xbox(2,i)+1/Nx(i),npxx(i)+1);
+    edges = linspace(xbox(1,i),xbox(2,i),npxx(i)+1);
     [~,xxboxidx(:,i)] = histc(xx(:,i),edges);
 end
 [xxboxidx,xxidx] = sortrows(xxboxidx,Dim:-1:1);
@@ -35,7 +35,7 @@ end
 kkboxidx = zeros(size(kk));
 npkk = npk*2^levels;
 for i = 1:Dim
-    edges = linspace(kbox(1,i),kbox(2,i)+1/Nk(i),npkk(i)+1);
+    edges = linspace(kbox(1,i),kbox(2,i),npkk(i)+1);
     [~,kkboxidx(:,i)] = histc(kk(:,i),edges);
 end
 [kkboxidx,kkidx] = sortrows(kkboxidx,Dim:-1:1);

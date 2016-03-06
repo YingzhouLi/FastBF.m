@@ -7,10 +7,10 @@ addpath('../src/');
 % Set up parameters
 i = 5;
 N = 2^i;
-tol = 1e-6;
-NG = 6;  % number of Chebyshev pts
+tol = 1e-3;
+NG = 4;  % number of Chebyshev pts
 
-kbox = [-N/2,N/2-1;-N/2,N/2-1]';
+kbox = [-N/2,N/2;-N/2,N/2]';
 if(0)
     kk = rand(N^2,2)*(N-1)-N/2;
 else
@@ -19,7 +19,7 @@ else
     kk = [k1(:) k2(:)];
 end
 
-xbox = [0,(N-1)/N;0,(N-1)/N]';
+xbox = [0,1;0,1]';
 if(1)
     xx = rand(N^2,2)*(N-1)/N;
 else

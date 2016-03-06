@@ -5,7 +5,7 @@ if(~exist(log_path, 'dir'))
 end
 
 NGlist = [4 6 8];
-tollist = [1e-5 1e-7 1e-10];
+tollist = [1e-4 1e-6 1e-8];
 
 for N = 2.^(5:1:9)
     fid = fopen([log_path 'Factor_nufft_2D_' num2str(N) '.log'],'a+');

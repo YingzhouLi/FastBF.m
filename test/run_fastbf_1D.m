@@ -2,11 +2,11 @@ function run_fastbf_1D(N, func_name, NG, tol, fid)
 
 addpath('../src/');
 
-kbox = [-N/2,N/2-1]';
+kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;
 kk = k(:);
 
-xbox = [0,(N-1)/N]';
+xbox = [0,1]';
 x = (0:N-1)/N;
 xx = x(:);
 

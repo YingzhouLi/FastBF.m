@@ -16,14 +16,14 @@ end
 % Set up parameters
 i=8;
 N = 2^i;
-tol = 1e-4;
+tol = 1e-14;
 NG = 4;  % number of Chebyshev pts
 
-kbox = [-N/2,N/2-1]';
+kbox = [-N/2,N/2]';
 %kk = (-N/2:N/2-1)';
 kk = rand(N,1)*(N-1)-N/2;
 
-xbox = [0,(N-1)/N]';
+xbox = [0,1]';
 %xx = ((0:N-1)/N)';
 xx = rand(N,1)*(N-1)/N;
 

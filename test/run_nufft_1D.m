@@ -2,11 +2,11 @@ function run_nufft_1D(N, NG, tol, fid)
 
 addpath('../src/');
 
-kbox = [-N/2,N/2-1]';
+kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;
 kk = k(:);
 
-xbox = [0,(N-1)/N]';
+xbox = [0,1]';
 if(~exist(sprintf('xx_%d_nufft_1D.bin', N), 'file'))
     fprintf('Generate non-uniform distribution of x from file\n');
     xx = rand(N,1)*(N-1)/N;

@@ -16,14 +16,14 @@ end
 % Set up parameters
 i = 8;
 N = 2^i;
-tol = 1e-2;
+tol = 1e-4;
 NG = 4;  % number of Chebyshev pts
 
-kbox = [-N/2,N/2-1]';
+kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;
 kk = k(:);
 
-xbox = [0,(N-1)/N]';
+xbox = [0,1]';
 x = (0:N-1)/N;
 xx = x(:);
 
@@ -77,6 +77,6 @@ disp(['Factorization Time: ' num2str(FactorT/60) ' mins']);
 disp(['Applying Time     : ' num2str(ApplyT) ' s']);
 disp(['------------------------------------------']);
 
-save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.mat'],'Factor','-v7.3');
-fid = fopen([log_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.log'],'w+');
+%save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.mat'],'Factor','-v7.3');
+%fid = fopen([log_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.log'],'w+');
 fclose(fid);

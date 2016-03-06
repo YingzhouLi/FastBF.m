@@ -5,7 +5,7 @@ if(~exist(log_path, 'dir'))
 end
 
 NGlist = [4 6 8];
-tollist = [1e-2 1e-4 1e-6];
+tollist = [1e-4 1e-6 1e-9];
 
 func_list = {'fun0'};
 for func_i = 1:length(func_list)
