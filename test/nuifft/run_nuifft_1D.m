@@ -1,32 +1,32 @@
-function run_nufft_2D(N, NG, tol, fid)
+function run_nuifft_1D(N, NG, tol, fid)
 
-addpath('../src/');
+addpath('../../src/');
+addpath('../kernels/');
 
-kbox = [-N/2,N/2;-N/2,N/2]';
+kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;
-[k1,k2] = ndgrid(k);
-kk = [k1(:) k2(:)];
+kk = k(:);
 
-xbox = [0,1;0,1]';
-if(~exist(sprintf('xx_%d_nufft_2D.bin', N), 'file'))
+xbox = [0,1]';
+if(~exist(sprintf('xx_%d_nuifft_1D.bin', N), 'file'))
     fprintf('Generate non-uniform distribution of x from file\n');
-    xx = rand(N^2,2)*(N-1)/N;
-    binstr = sprintf('xx_%d_nufft_2D.bin', N);
+    xx = rand(N,1)*(N-1)/N;
+    binstr = sprintf('xx_%d_nuifft_1D.bin', N);
     fidxx = fopen(binstr,'w');
     string = {'DblNumMat'};
     serialize(fidxx, xx, string);
     fclose(fidxx);
 else
     fprintf('Read non-uniform distribution of x from file\n');
-    binstr = sprintf('xx_%d_nufft_2D.bin', N);
+    binstr = sprintf('xx_%d_nuifft_1D.bin', N);
     fidxx = fopen(binstr,'r');
     string = {'DblNumMat'};
     xx = deserialize(fidxx, string);
 end
 
-fun = @(x,k)funFT(x,k);
+fun = @(x,k)funIFT(x,k);
 
-f = randn(N^2,1) + 1i*randn(N^2,1);
+f = randn(N,1) + 1i*randn(N,1);
 
 tic;
 [Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol);
@@ -41,7 +41,7 @@ NC = 256;
 tic;
 relerr = fbf_check(N,fun,f,xx,kk,yy,NC);
 Td = toc;
-Td = Td*N*N/NC;
+Td = Td*N/NC;
 
 fprintf(fid, '------------------------------------------\n');
 fprintf(fid, 'N                 : %4d\n', N);

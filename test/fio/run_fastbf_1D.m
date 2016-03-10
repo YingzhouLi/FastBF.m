@@ -1,6 +1,7 @@
 function run_fastbf_1D(N, func_name, NG, tol, fid)
 
-addpath('../src/');
+addpath('../../src/');
+addpath('../kernels/');
 
 kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;

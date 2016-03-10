@@ -2,6 +2,7 @@ close all;
 clear all;
 
 addpath('../src/');
+addpath('./kernels/');
 
 % Set up parameters
 i = 6;
