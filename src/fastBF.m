@@ -1,16 +1,16 @@
-function [Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol)
+function [Factor,Rcomp] = fastBF(fun_org,xx,kk,NG,tol,tag)
+
+if nargin == 5
+    tag = 'Regular';
+end
+
+[fun,xx,kk,xbox,kbox,npx,npk] = fbf_prepbox(fun_org,xx,kk,tag);
 
 grid = Chey_grid(NG);
-
-[Nx,Dim] = size(xx);
-[Nk,~  ] = size(kk);
-Nx = Nx^(1/Dim)*ones(1,Dim);
-Nk = Nk^(1/Dim)*ones(1,Dim);
+Dim = size(xx,2);
 NGD = NG^Dim;
 
-npx = 2.^ceil(log2(sqrt(Nx))+0.5);
-npk = 2.^ceil(log2(sqrt(Nk))+0.5);
-levels = max(0,min(floor(log2(Nx./npx./NG))));
+levels = max(0,min(floor(log2([npx npk])-3)));
 
 xxboxidx = zeros(size(xx));
 npxx = npx*2^levels;
@@ -29,8 +29,6 @@ for itx = 1:prod(npxx)
         xxIA = [xxIA(1:itx-1);xxIA(itx);xxIA(itx:end)];
     end
 end
-
-
 
 kkboxidx = zeros(size(kk));
 npkk = npk*2^levels;
@@ -212,8 +210,8 @@ nnz_init = fbf_nnz(levels,Mcell,GTolcell,Ucell,HTolcell,Vcell);
 
 [Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_outComp(levels,npx,npk,tol,...
                                             Mcell,GTolcell,Ucell,HTolcell,Vcell);
-%[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
-%                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
+[Mcell,GTolcell,Ucell,HTolcell,Vcell] = fastBF_inComp(levels,npx,npk,tol,...
+                                            Mcell,GTolcell,Ucell,HTolcell,Vcell);
 
 nnz_comp = fbf_nnz(levels,Mcell,GTolcell,Ucell,HTolcell,Vcell);
 

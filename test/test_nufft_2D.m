@@ -7,10 +7,9 @@ addpath('./kernels/');
 % Set up parameters
 i = 5;
 N = 2^i;
-tol = 1e-3;
-NG = 4;  % number of Chebyshev pts
+tol = 1e-8;
+NG = 8;  % number of Chebyshev pts
 
-kbox = [-N/2,N/2;-N/2,N/2]';
 if(0)
     kk = rand(N^2,2)*(N-1)-N/2;
 else
@@ -19,7 +18,6 @@ else
     kk = [k1(:) k2(:)];
 end
 
-xbox = [0,1;0,1]';
 if(1)
     xx = rand(N^2,2)*(N-1)/N;
 else
@@ -33,7 +31,7 @@ fun = @(x,k)funFT(x,k);
 f = randn(N^2,1) + sqrt(-1)*randn(N^2,1);
 
 tic;
-[Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol);
+[Factor,Rcomp] = fastBF(fun,xx,kk,NG,tol);
 FactorT = toc;
 
 tic;

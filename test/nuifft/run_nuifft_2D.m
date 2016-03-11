@@ -3,12 +3,10 @@ function run_nuifft_2D(N, NG, tol, fid)
 addpath('../../src/');
 addpath('../kernels/');
 
-kbox = [-N/2,N/2;-N/2,N/2]';
 k = -N/2:N/2-1;
 [k1,k2] = ndgrid(k);
 kk = [k1(:) k2(:)];
 
-xbox = [0,1;0,1]';
 if(~exist(sprintf('xx_%d_nuifft_2D.bin', N), 'file'))
     fprintf('Generate non-uniform distribution of x from file\n');
     xx = rand(N^2,2)*(N-1)/N;
@@ -30,7 +28,7 @@ fun = @(x,k)funIFT(x,k);
 f = randn(N^2,1) + 1i*randn(N^2,1);
 
 tic;
-[Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol);
+[Factor,Rcomp] = fastBF(fun,xx,kk,NG,tol);
 FactorT = toc;
 
 tic;
