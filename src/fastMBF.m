@@ -11,7 +11,7 @@ kbox(1,:) = min(kk);
 kbox(2,:) = max(kk)+(max(kk)-min(kk))./Nk;
 
 Factors = cell(coronalevels+1,2);
-Rcomps = zeros(coronalevels+1,1);
+Rcomp = 0;
 
 for iter = 1:coronalevels
     ckbox = kbox/2^iter;
@@ -48,7 +48,8 @@ for iter = 1:coronalevels
     kk = kk(kkid,:);
     
     Factors{iter,2} = kkidglobal(kkid);
-    [Factors{iter,1},Rcomps(iter)] = fastBF(fun,xx,kk,NG,tol,'multiscale');
+    [Factors{iter,1},Rcomp_tmp] = fastBF(fun,xx,kk,NG,tol,'multiscale');
+    Rcomp = Rcomp + Rcomp_tmp*length(kkid);
 
     kk = kkcp(ckkid,:);
     kkidglobal = kkidglobal(ckkid);
@@ -56,6 +57,7 @@ end
 
 Factors{end,2} = kkidglobal;
 Factors{end,1} = fun(xx,kk);
-Rcomps(end) = 1;
+Rcomp = Rcomp + length(kkidglobal);
+Rcomp = Rcomp/Nk^Dim;
 
 end

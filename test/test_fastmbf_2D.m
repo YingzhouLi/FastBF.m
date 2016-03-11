@@ -37,7 +37,7 @@ end
 f = randn(N^2,1) + sqrt(-1)*randn(N^2,1);
 
 tic;
-[Factors,Rcomps] = fastMBF(fun,xx,kk,NG,tol);
+[Factors,Rcomp] = fastMBF(fun,xx,kk,NG,tol);
 FactorT = toc;
 
 tic;
@@ -56,7 +56,7 @@ disp(['N                 : ' num2str(N)]);
 disp(['Chebyshev pts     : ' num2str(NG)]);
 disp(['Tolerance         : ' num2str(tol)]);
 disp(['Relative Error_2  : ' num2str(relerr)]);
-disp(['Compression Ratio : ' num2str(mean(Rcomps))]);
+disp(['Compression Ratio : ' num2str(Rcomp)]);
 disp(['Direct Time       : ' num2str(Td) ' s']);
 disp(['Running Time      : ' num2str(RunT/60) ' mins']);
 disp(['Factorization Time: ' num2str(FactorT/60) ' mins']);
