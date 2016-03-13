@@ -10,5 +10,5 @@
 #################
 
 module load matlab
-cd ../../test
+cd ../../test/fio
 matlab -nojvm -r "batch_fastbf_1D;quit"

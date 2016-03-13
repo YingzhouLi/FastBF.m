@@ -1,4 +1,4 @@
-raw_path = ¡®../test/log/¡®;
+raw_path = '../test/log/';
 
 func_name = 'fun0';
 
@@ -22,7 +22,7 @@ for N = 2.^(8:2:20)
         tline   = fgets(fid);
         relerr2 = textscan(tline,'Relative Error_2  : %f');
         tline   = fgets(fid);
-        Rcomp   = textscan(tline,¡¯Compression Ratio : %f');
+        Rcomp   = textscan(tline,'Compression Ratio : %f');
         tline   = fgets(fid);
         Td      = textscan(tline,'Direct Time       : %f s');
         tline   = fgets(fid);
@@ -32,7 +32,7 @@ for N = 2.^(8:2:20)
         tline   = fgets(fid);
         Ta      = textscan(tline,'Applying Time     : %f s');
         fgets(fid); %----------------------------------------------
-        tline = fgets(fid); %
+        tline = fgets(fid);
         eline = fgets(fid);
         fprintf(outfid{NG{1}},'%7d,%2d & %.2e & %.2e & %.2e & %.2e & %.2e \\\\\n',...
                                 tN{1},NG{1},relerr2{1},Tfact{1},Td{1},Ta{1},Td{1}/Ta{1});

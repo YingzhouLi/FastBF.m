@@ -10,5 +10,5 @@
 #################
 
 module load matlab
-cd ../../test
+cd ../../test/nufft
 matlab -nojvm -r "batch_nufft_1D_8;quit"

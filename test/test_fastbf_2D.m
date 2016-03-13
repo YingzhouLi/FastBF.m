@@ -66,4 +66,5 @@ disp(['------------------------------------------']);
 % if(~exist(data_path, 'dir'))
 %     mkdir(data_path);
 % end
-% save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_2D.mat'],'Factor','-v7.3');
+% save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG)...
+%      '_2D.mat'],'Factor','-v7.3');
