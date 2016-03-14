@@ -27,11 +27,11 @@ end
 f = randn(N^2,1) + 1i*randn(N^2,1);
 
 tic;
-[Factor,Rcomp] = fastPBF(fun,xx,kk,NG,tol);
+[Factor,Rcomp] = fastBF(fun,xx,kk,NG,tol,'polar');
 FactorT = toc;
 
 tic;
-yy = apply_bf(Factor,f);
+yy = apply_fbf(Factor,f);
 ApplyT = toc;
 RunT = FactorT + ApplyT;
 

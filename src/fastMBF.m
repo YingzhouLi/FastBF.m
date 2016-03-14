@@ -1,4 +1,4 @@
-function [Factors,Rcomps] = fastMBF(fun,xx,kk,NG,tol)
+function [Factors,Rcomp] = fastMBF(fun,xx,kk,NG,tol)
 
 Dim = size(kk,2);
 assert(Dim==2||Dim==3,'fastMBF only supports 2- and 3-dimensional problems.');
@@ -58,6 +58,6 @@ end
 Factors{end,2} = kkidglobal;
 Factors{end,1} = fun(xx,kk);
 Rcomp = Rcomp + length(kkidglobal);
-Rcomp = Rcomp/Nk^Dim;
+Rcomp = Rcomp/size(kk,1);
 
 end

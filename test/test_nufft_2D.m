@@ -5,34 +5,26 @@ addpath('../src/');
 addpath('./kernels/');
 
 % Set up parameters
-i = 5;
+i = 6;
 N = 2^i;
-tol = 1e-8;
-NG = 8;  % number of Chebyshev pts
+tol = 1e-9;
+NG = 10;  % number of Chebyshev pts
 
-if(0)
-    kk = rand(N^2,2)*(N-1)-N/2;
-else
-    k = -N/2:N/2-1;
-    [k1,k2] = ndgrid(k);
-    kk = [k1(:) k2(:)];
-end
+k = -N/2:N/2-1;
+[k1,k2] = ndgrid(k);
+kk = [k1(:) k2(:)];
 
-if(1)
-    xx = rand(N^2,2)*(N-1)/N;
-else
-    x = (0:N-1)/N;
-    [x1,x2] = ndgrid(x);
-    xx = [x1(:) x2(:)];
-end
+xx = rand(N^2,2)*(N-1)/N;
 
 fun = @(x,k)funFT(x,k);
 
 f = randn(N^2,1) + sqrt(-1)*randn(N^2,1);
 
 tic;
-[Factor,Rcomp] = fastBF(fun,xx,kk,NG,tol);
+[Factor,Rcomp] = fastBF(fun,kk,xx,NG,tol);
 FactorT = toc;
+
+opCount = op_count(Factor);
 
 tic;
 yy = apply_fbf(Factor,f);
@@ -41,7 +33,7 @@ RunT = FactorT + ApplyT;
 
 NC = 256;
 tic;
-relerr = fbf_check(N,fun,f,xx,kk,yy,NC);
+relerr = fbf_check(N,fun,f,kk,xx,yy,NC);
 Td = toc;
 Td = Td*N*N/NC;
 
@@ -51,6 +43,8 @@ disp(['Chebyshev pts     : ' num2str(NG)]);
 disp(['Tolerance         : ' num2str(tol)]);
 disp(['Relative Error_2  : ' num2str(relerr)]);
 disp(['Compression Ratio : ' num2str(Rcomp)]);
+disp(['Prefactor         : ' num2str(opCount/N^2/log2(N))]);
+disp(['Ratio wrt FFT     : ' num2str(opCount/N^2/log2(N)/34*9/2)]);
 disp(['Direct Time       : ' num2str(Td) ' s']);
 disp(['Running Time      : ' num2str(RunT/60) ' mins']);
 disp(['Factorization Time: ' num2str(FactorT/60) ' mins']);

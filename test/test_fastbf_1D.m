@@ -5,16 +5,14 @@ addpath('../src/');
 addpath('./kernels/');
 
 % Set up parameters
-i = 8;
+i = 10;
 N = 2^i;
-tol = 1e-4;
-NG = 4;  % number of Chebyshev pts
+tol = 1e-6;
+NG = 10;  % number of Chebyshev pts
 
-kbox = [-N/2,N/2]';
 k = -N/2:N/2-1;
 kk = k(:);
 
-xbox = [0,1]';
 x = (0:N-1)/N;
 xx = x(:);
 
@@ -31,7 +29,7 @@ end
 f = randn(N,1) + sqrt(-1)*randn(N,1);
 
 tic;
-[Factor,Rcomp] = fastBF(fun,xx,xbox,kk,kbox,NG,tol);
+[Factor,Rcomp] = fastBF(fun,xx,kk,NG,tol);
 FactorT = toc;
 
 tic;

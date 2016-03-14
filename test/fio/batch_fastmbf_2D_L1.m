@@ -4,8 +4,8 @@ if(~exist(log_path, 'dir'))
     mkdir(log_path);
 end
 
-NGlist = [6];
-tollist = [1e-6];
+NGlist = [2 6];
+tollist = [5e-1 1e-4];
 
 func_list = {'fun0'};
 for func_i = 1:length(func_list)

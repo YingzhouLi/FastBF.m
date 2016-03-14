@@ -7,8 +7,8 @@ addpath('./kernels/');
 % Set up parameters
 i = 6;
 N = 2^i;
-tol = 1e-8;
-NG = 8;  % number of Chebyshev pts
+tol = 1e-7;
+NG = 9;  % number of Chebyshev pts
 
 r = 0:N/2-1;
 
