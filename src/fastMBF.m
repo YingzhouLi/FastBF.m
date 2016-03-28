@@ -58,6 +58,6 @@ end
 Factors{end,2} = kkidglobal;
 Factors{end,1} = fun(xx,kk);
 Rcomp = Rcomp + length(kkidglobal);
-Rcomp = Rcomp/size(kk,1);
+Rcomp = Rcomp/prod(Nk);
 
 end

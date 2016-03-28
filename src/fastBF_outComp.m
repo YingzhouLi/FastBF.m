@@ -3,9 +3,6 @@ function [Mcell,GTolcell,Ucell,HTolcell,Vcell] = ...
 
 Dim = size(npx,2);
 
-maxR = 0;
-minR = 1000;
-
 %---------------------------------------------------------------
 %   M compression
 
@@ -15,19 +12,11 @@ Rcell = cell(prod(npx),prod(npk));
 for itx = 1:prod(npx)
     for itk = 1:prod(npk)
         [U,S,V] = svdtrunc(Mcell{itx,itk},tol);
-        if( size(S,1) > maxR )
-            maxR = size(S,1);
-        end
-        if( size(S,1) < minR )
-            minR = size(S,1);
-        end
         Lcell{itx,itk} = U*sqrt(S);
         Rcell{itk,itx} = sqrt(S)*V';
         Mcell{itx,itk} = eye(size(S));
     end
 end
-
-disp([minR, maxR]);
 
 %---------------------------------------------------------------
 %   G compression

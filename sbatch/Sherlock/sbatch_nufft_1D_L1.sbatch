@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=nufft_2D_8
-#SBATCH --output=out/out_nufft_2D_8.out
-#SBATCH --error=err/err_nufft_2D_8.err
+#SBATCH --job-name=nufft_1D_L1
+#SBATCH --output=out/out_nufft_1D_L1.out
+#SBATCH --error=err/err_nufft_1D_L1.err
 #SBATCH --time=16:00:00
 #SBATCH --partition=bigmem
 #SBATCH --qos=bigmem
@@ -11,4 +11,4 @@
 
 module load matlab
 cd ../../test/nufft
-matlab -nojvm -r "batch_nufft_2D_8;quit"
+matlab -nojvm -r "batch_nufft_1D_L1;quit"

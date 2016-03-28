@@ -7,8 +7,8 @@ end
 %WarmUP
 fft(rand(128,1));
 
-NGlist = [4];
-tollist = [1e-4];
+NGlist = [2 6];
+tollist = [1e-1 1e-4];
 
 for N = 2.^(20)
     x = rand(N,1);
