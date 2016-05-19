@@ -1,7 +1,7 @@
 FastBF
 ======
 
-Fast Butterfly Factorization for Fourier Integral Operators
+## Fast Butterfly Factorization for Fourier Integral Operators
 
 This is also known as Interpolative Butterfly Factorization [1].
 
@@ -23,7 +23,9 @@ with the interpolative butterfly factorization.
 
 More examples of special function transforms can be found in `test` folder as well.
 
-Reference:
+---
+
+### Reference:
 
 [1] Y. Li and H. Yang. Interpolative Butterfly Factorization. Submitted. [PDF][ibf]
 
