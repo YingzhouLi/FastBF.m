@@ -18,12 +18,12 @@ xx = x(:);
 
 func_name = 'fun0';
 switch func_name
-case 'funFT'
-    fun = @(x,k)funFT(x,k);
-case 'funIFT'
-    fun = @(x,k)funIFT(x,k);
-case 'fun0'
-    fun = @(x,k)fun0_1D(x,k);
+    case 'funFT'
+        fun = @(x,k)funFT(x,k);
+    case 'funIFT'
+        fun = @(x,k)funIFT(x,k);
+    case 'fun0'
+        fun = @(x,k)fun0_1D(x,k);
 end
 
 f = randn(N,1) + sqrt(-1)*randn(N,1);
@@ -56,8 +56,8 @@ disp(['Applying Time     : ' num2str(ApplyT) ' s']);
 disp(['------------------------------------------']);
 
 
-% data_path = './data/';
-% if(~exist(data_path, 'dir'))
-%     mkdir(data_path);
-% end
-% save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.mat'],'Factor','-v7.3');
+data_path = './data/';
+if(~exist(data_path, 'dir'))
+    mkdir(data_path);
+end
+save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_1D.mat'],'Factor','-v7.3');

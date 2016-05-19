@@ -11,7 +11,7 @@ end
 if Dim == 2
     p1 = p(:,1);
     p2 = p(:,2);
-
+    
     k1 = p1.*cos(p2);
     k2 = p1.*sin(p2);
     k = [k1 k2];
@@ -23,7 +23,7 @@ if Dim == 3
     p1 = p(:,1);
     p2 = p(:,2);
     p3 = p(:,3);
-
+    
     k1 = p1.*sin(p2).*cos(p3);
     k2 = p1.*sin(p2).*sin(p3);
     k3 = p1.*cos(p2);

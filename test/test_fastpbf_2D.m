@@ -4,7 +4,7 @@ clear all;
 addpath('../src/');
 addpath('./kernels/');
 
-% Set up parameters
+Set up parameters
 i = 6;
 N = 2^i;
 tol = 1e-7;
@@ -22,16 +22,16 @@ xx = [x1(:) x2(:)];
 
 func_name = 'fun0';
 switch func_name
-case 'funFT'
-    fun = @(x,k)funFT(x,k);
-case 'funIFT'
-    fun = @(x,k)funIFT(x,k);
-case 'fun0'
-    fun = @(x,k)fun0_2D(x,k);
-case 'fun1'
-    fun = @(x,k)fun1_2D(x,k);
-case 'fun2'
-    fun = @(x,k)fun2_2D(x,k);
+    case 'funFT'
+        fun = @(x,k)funFT(x,k);
+    case 'funIFT'
+        fun = @(x,k)funIFT(x,k);
+    case 'fun0'
+        fun = @(x,k)fun0_2D(x,k);
+    case 'fun1'
+        fun = @(x,k)fun1_2D(x,k);
+    case 'fun2'
+        fun = @(x,k)fun2_2D(x,k);
 end
 
 f = randn(N^2,1) + sqrt(-1)*randn(N^2,1);
@@ -64,8 +64,8 @@ disp(['Applying Time     : ' num2str(ApplyT) ' s']);
 disp(['------------------------------------------']);
 
 
-% data_path = './data/';
-% if(~exist(data_path, 'dir'))
-%     mkdir(data_path);
-% end
-% save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_2D.mat'],'Factor','-v7.3');
+data_path = './data/';
+if(~exist(data_path, 'dir'))
+    mkdir(data_path);
+end
+save([data_path 'Factor_' func_name '_' num2str(N) '_' num2str(NG) '_2D.mat'],'Factor','-v7.3');

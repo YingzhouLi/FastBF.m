@@ -29,7 +29,8 @@ for ell = 1:levels
     for itx = 1:prod(npxx)
         itx_par = vec2idx(npxx_par,floor((idx2vec(npxx,itx)+1)/2));
         for itk_child = 1:prod(npkk_child)
-            GTolcell{ell}{itx,itk_child} = GTolcell{ell}{itx,itk_child}*Lcell{itx_par,itk_child};
+            GTolcell{ell}{itx,itk_child} = ...
+                GTolcell{ell}{itx,itk_child}*Lcell{itx_par,itk_child};
         end
     end
     
@@ -38,7 +39,8 @@ for ell = 1:levels
     for itk = 1:prod(npkk)
         for it_child = 1:2^Dim
             itkchildcell(itk,it_child) = ...
-                vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2 ...
+                +idx2vec(2*ones(1,Dim),it_child));
         end
     end
     for itx = 1:prod(npxx)
@@ -85,7 +87,8 @@ for ell = 1:levels
     for itk = 1:prod(npkk)
         itk_par = vec2idx(npkk_par,floor((idx2vec(npkk,itk)+1)/2));
         for itx_child = 1:prod(npxx_child)
-            HTolcell{ell}{itk,itx_child} = Rcell{itk_par,itx_child}*HTolcell{ell}{itk,itx_child};
+            HTolcell{ell}{itk,itx_child} = ...
+                Rcell{itk_par,itx_child}*HTolcell{ell}{itk,itx_child};
         end
     end
     
@@ -94,7 +97,8 @@ for ell = 1:levels
     for itx = 1:prod(npxx)
         for it_child = 1:2^Dim
             itxchildcell(itx,it_child) = ...
-                vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2 ...
+                +idx2vec(2*ones(1,Dim),it_child));
         end
     end
     for itk = 1:prod(npkk)

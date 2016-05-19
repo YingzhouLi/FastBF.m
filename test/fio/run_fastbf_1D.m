@@ -10,12 +10,12 @@ x = (0:N-1)/N;
 xx = x(:);
 
 switch func_name
-case 'funFT'
-    fun = @(x,k)funFT(x,k);
-case 'funIFT'
-    fun = @(x,k)funIFT(x,k);
-case 'fun0'
-    fun = @(x,k)fun0_1D(x,k);
+    case 'funFT'
+        fun = @(x,k)funFT(x,k);
+    case 'funIFT'
+        fun = @(x,k)funIFT(x,k);
+    case 'fun0'
+        fun = @(x,k)fun0_1D(x,k);
 end
 
 f = randn(N,1) + 1i*randn(N,1);

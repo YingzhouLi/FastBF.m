@@ -30,18 +30,21 @@ for ell = levels:-1:1
     for itx = 1:prod(npxx)
         for itk = 1:prod(npkk)
             for it_child = 1:2^Dim
-                itk_child = vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2+idx2vec(2*ones(1,Dim),it_child));
-                GTolcell{ell}{itx,itk_child} = Lcell{itx,itk}*GTolcell{ell}{itx,itk_child};
+                itk_child = vec2idx(npkk_child,(idx2vec(npkk,itk)-1)*2 ...
+                    +idx2vec(2*ones(1,Dim),it_child));
+                GTolcell{ell}{itx,itk_child} = ...
+                    Lcell{itx,itk}*GTolcell{ell}{itx,itk_child};
             end
         end
     end
-
+    
     Lcell = cell(prod(npxx_par),prod(npkk_child));
     itxcell = zeros(prod(npxx_par),2^Dim);
     for itx_par = 1:prod(npxx_par)
         for it_child = 1:2^Dim
             itxcell(itx_par,it_child) = ...
-                vec2idx(npxx,(idx2vec(npxx_par,itx_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                vec2idx(npxx,(idx2vec(npxx_par,itx_par)-1)*2 ...
+                +idx2vec(2*ones(1,Dim),it_child));
         end
     end
     for itx_par = 1:prod(npxx_par)
@@ -91,18 +94,21 @@ for ell = levels:-1:1
     for itk = 1:prod(npkk)
         for itx = 1:prod(npxx)
             for it_child = 1:2^Dim
-                itx_child = vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2+idx2vec(2*ones(1,Dim),it_child));
-                HTolcell{ell}{itk,itx_child} = HTolcell{ell}{itk,itx_child}*Rcell{itk,itx};
+                itx_child = vec2idx(npxx_child,(idx2vec(npxx,itx)-1)*2 ...
+                    +idx2vec(2*ones(1,Dim),it_child));
+                HTolcell{ell}{itk,itx_child} = ...
+                    HTolcell{ell}{itk,itx_child}*Rcell{itk,itx};
             end
         end
     end
-
+    
     Rcell = cell(prod(npkk_par),prod(npxx_child));
     itkcell = zeros(prod(npkk_par),2^Dim);
     for itk_par = 1:prod(npkk_par)
         for it_child = 1:2^Dim
             itkcell(itk_par,it_child) = ...
-                vec2idx(npkk,(idx2vec(npkk_par,itk_par)-1)*2+idx2vec(2*ones(1,Dim),it_child));
+                vec2idx(npkk,(idx2vec(npkk_par,itk_par)-1)*2 ...
+                +idx2vec(2*ones(1,Dim),it_child));
         end
     end
     for itk_par = 1:prod(npkk_par)

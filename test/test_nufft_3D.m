@@ -52,8 +52,8 @@ disp(['Applying Time     : ' num2str(ApplyT) ' s']);
 disp(['------------------------------------------']);
 
 
-% data_path = './data/';
-% if(~exist(data_path, 'dir'))
-%     mkdir(data_path);
-% end
-% save([data_path 'Factor_nufft_' num2str(N) '_' num2str(NG) '_3D.mat'],'Factor','-v7.3');
+data_path = './data/';
+if(~exist(data_path, 'dir'))
+    mkdir(data_path);
+end
+save([data_path 'Factor_nufft_' num2str(N) '_' num2str(NG) '_3D.mat'],'Factor','-v7.3');

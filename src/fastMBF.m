@@ -1,7 +1,8 @@
 function [Factors,Rcomp] = fastMBF(fun,xx,kk,NG,tol)
 
 Dim = size(kk,2);
-assert(Dim==2||Dim==3,'fastMBF only supports 2- and 3-dimensional problems.');
+assert(Dim==2||Dim==3,...
+    'fastMBF only supports 2- and 3-dimensional problems.');
 
 Nk = size(kk,1);
 Nk = Nk^(1/Dim)*ones(1,Dim);
@@ -21,7 +22,7 @@ for iter = 1:coronalevels
         ck1e = ckbox(2,1);
         ck2s = ckbox(1,2);
         ck2e = ckbox(2,2);
-
+        
         kkid = find( (kk(:,1)<ck1s | kk(:,1)>=ck1e) ...
             | (kk(:,2)<ck2s | kk(:,2)>=ck2e) );
         ckkid = find( kk(:,1)>=ck1s & kk(:,1)<ck1e ...
@@ -35,7 +36,7 @@ for iter = 1:coronalevels
         ck2e = ckbox(2,2);
         ck3s = ckbox(1,3);
         ck3e = ckbox(2,3);
-
+        
         kkid = find( (kk(:,1)<ck1s | kk(:,1)>=ck1e) ...
             | (kk(:,2)<ck2s | kk(:,2)>=ck2e) ...
             | (kk(:,3)<ck3s | kk(:,3)>=ck3e) );
@@ -50,7 +51,7 @@ for iter = 1:coronalevels
     Factors{iter,2} = kkidglobal(kkid);
     [Factors{iter,1},Rcomp_tmp] = fastBF(fun,xx,kk,NG,tol,'multiscale');
     Rcomp = Rcomp + Rcomp_tmp*length(kkid);
-
+    
     kk = kkcp(ckkid,:);
     kkidglobal = kkidglobal(ckkid);
 end

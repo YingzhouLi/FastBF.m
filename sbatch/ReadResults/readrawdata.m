@@ -6,11 +6,13 @@ NGlist = [4, 6, 8];
 
 outfid = cell(100,1);
 for NG = NGlist
-    outfid{NG} = fopen(['Table_' func_name '_1D_' num2str(NG) '.log'],'w');
+    outfid{NG} = fopen(['Table_' func_name '_1D_' num2str(NG) '.log'],...
+        'w');
 end
 
 for N = 2.^(8:2:20)
-    fid = fopen([raw_path 'Factor_' func_name '_1D_' num2str(N) '.log'],'r');
+    fid = fopen([raw_path 'Factor_' func_name '_1D_' num2str(N) '.log'],...
+        'r');
     eline = fgets(fid); %----------------------------------------------
     while ischar(eline)
         tline   = fgets(fid);
@@ -34,8 +36,9 @@ for N = 2.^(8:2:20)
         fgets(fid); %----------------------------------------------
         tline = fgets(fid);
         eline = fgets(fid);
-        fprintf(outfid{NG{1}},'%7d,%2d & %.2e & %.2e & %.2e & %.2e & %.2e \\\\\n',...
-                                tN{1},NG{1},relerr2{1},Tfact{1},Td{1},Ta{1},Td{1}/Ta{1});
+        fprintf(outfid{NG{1}},...
+            '%7d,%2d & %.2e & %.2e & %.2e & %.2e & %.2e \\\\\n',...
+            tN{1},NG{1},relerr2{1},Tfact{1},Td{1},Ta{1},Td{1}/Ta{1});
     end
     fclose(fid);
 end

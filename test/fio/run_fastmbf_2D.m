@@ -12,16 +12,16 @@ x = (0:N-1)/N;
 xx = [x1(:) x2(:)];
 
 switch func_name
-case 'funFT'
-    fun = @(x,k)funFT(x,k);
-case 'funIFT'
-    fun = @(x,k)funIFT(x,k);
-case 'fun0'
-    fun = @(x,k)fun0_2D(x,k);
-case 'fun1'
-    fun = @(x,k)fun1_2D(x,k);
-case 'fun2'
-    fun = @(x,k)fun2_2D(x,k);
+    case 'funFT'
+        fun = @(x,k)funFT(x,k);
+    case 'funIFT'
+        fun = @(x,k)funIFT(x,k);
+    case 'fun0'
+        fun = @(x,k)fun0_2D(x,k);
+    case 'fun1'
+        fun = @(x,k)fun1_2D(x,k);
+    case 'fun2'
+        fun = @(x,k)fun2_2D(x,k);
 end
 
 f = randn(N^2,1) + 1i*randn(N^2,1);
