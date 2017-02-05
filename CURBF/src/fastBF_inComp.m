@@ -137,7 +137,7 @@ end
 
 for itx = 1:prod(npx)
     for itk = 1:prod(npk)
-        Mcell{itx,itk} = Lcell{itx,itk}*Rcell{itk,itx};
+        Mcell{itx,itk} = Lcell{itx,itk}*Mcell{itx,itk}*Rcell{itk,itx};
     end
 end
 
